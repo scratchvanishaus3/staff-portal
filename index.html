@@ -147,7 +147,7 @@
 
                 if (data.values) {
                     // Filter jobs for this staff member
-                    // Show only jobs that are: assigned to them, not completed, AND released
+                    // Show only jobs that are: assigned to them and not completed
                     jobs = data.values
                         .map((row, index) => ({
                             rowNumber: index + 2,
@@ -175,8 +175,7 @@
                             }
 
                             return assignedTo.toLowerCase() === staffName.toLowerCase() &&
-                                status.toLowerCase() !== 'completed' &&
-                                released.toLowerCase() === 'yes';
+                                status.toLowerCase() !== 'completed';
                         });
 
                     renderJobs();
