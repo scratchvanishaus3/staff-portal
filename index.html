@@ -140,46 +140,60 @@
             refreshIcon.classList.add('animate-spin');
 
             try {
-                const range = `${CONFIG.SHEET_NAME}!A2:N`;
+                const range = `${CONFIG.SHEET_NAME}!A2:O`;
                 const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
                 const response = await fetch(url);
                 const data = await response.json();
 
                 if (data.values) {
+                    console.log('Total rows received:', data.values.length);
+                    console.log('Looking for staff name:', staffName);
+                    
                     // Filter jobs for this staff member
                     // Show only jobs that are: assigned to them and not completed
-                    jobs = data.values
-                        .map((row, index) => ({
-                            rowNumber: index + 2,
-                            date: row[0] || '',
-                            startTime: row[1] || '',
-                            endTime: row[2] || '',
-                            status: row[3] || 'Assigned',
-                            location: row[4] || '',
-                            phone: row[5] || '',
-                            description: row[6] || '',
-                            price: row[7] || '',
-                            email: row[8] || '',
-                            assignedTo: row[9] || '',
-                            amountPaid: row[10] || '',
-                            paymentMethod: row[11] || '',
-                            photosLink: row[12] || ''
-                        }))
-                        .filter(job => {
-                            const assignedTo = job.assignedTo || '';
-                            const status = job.status || 'Assigned';
+                    const allJobs = data.values.map((row, index) => ({
+                        rowNumber: index + 2,
+                        date: row[0] || '',           // Column A - Date
+                        startTime: row[1] || '',       // Column B - Start Time
+                        endTime: row[2] || '',         // Column C - End Time
+                        status: row[3] || 'Assigned',  // Column D - Status
+                        clientName: row[4] || '',      // Column E - Client Name
+                        address: row[5] || '',         // Column F - Address
+                        phone: row[6] || '',           // Column G - Phone
+                        description: row[7] || '',     // Column H - Description
+                        price: row[8] || '',           // Column I - Price
+                        email: row[9] || '',           // Column J - Email
+                        assignedTo: row[10] || '',     // Column K - Assigned To (FIXED!)
+                        amountPaid: row[11] || '',     // Column L - Amount Paid
+                        paymentMethod: row[12] || '',  // Column M - Payment Method
+                        photosLink: row[13] || ''      // Column N - Photos Link
+                    }));
+                    
+                    console.log('All jobs mapped:', allJobs);
+                    
+                    jobs = allJobs.filter(job => {
+                        const assignedTo = job.assignedTo || '';
+                        const status = job.status || 'Assigned';
+                        
+                        console.log(`Row ${job.rowNumber}: assignedTo="${assignedTo}", status="${status}"`);
 
-                            // Filter out jobs that are completed OR locally marked as completed
-                            if (completedJobRows.has(job.rowNumber)) {
-                                return false; // Hide jobs we just completed locally
-                            }
-
-                            return assignedTo.toLowerCase() === staffName.toLowerCase() &&
-                                status.toLowerCase() !== 'completed';
-                        });
-
+                        // Filter out jobs that are completed OR locally marked as completed
+                        if (completedJobRows.has(job.rowNumber)) {
+                            console.log(`Row ${job.rowNumber}: Filtered (locally completed)`);
+                            return false;
+                        }
+                        
+                        const matches = assignedTo.toLowerCase() === staffName.toLowerCase() &&
+                            status.toLowerCase() !== 'completed';
+                        
+                        console.log(`Row ${job.rowNumber}: ${matches ? 'MATCH' : 'NO MATCH'}`);
+                        return matches;
+                    });
+                    
+                    console.log('Filtered jobs for', staffName + ':', jobs);
                     renderJobs();
                 } else {
+                    console.log('No data.values returned');
                     jobs = [];
                     renderJobs();
                 }
@@ -235,7 +249,8 @@
                             <div><span class="font-semibold">Date:</span> ${job.date}</div>
                             <div><span class="font-semibold">Start Time:</span> ${job.startTime}</div>
                             <div><span class="font-semibold">End Time:</span> ${job.endTime}</div>
-                            <div><span class="font-semibold">Location:</span> ${job.location}</div>
+                            <div><span class="font-semibold">Client:</span> ${job.clientName}</div>
+                            <div><span class="font-semibold">Address:</span> ${job.address}</div>
                             <div><span class="font-semibold">Phone:</span> ${job.phone}</div>
                             <div><span class="font-semibold">Price:</span> ${job.price}</div>
                             <div class="pt-2">
