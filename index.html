@@ -135,15 +135,28 @@
         }
 
         async function loadJobs() {
-            if (!validToken) return;
+            if (!validToken) {
+                console.log('Invalid token, not loading jobs');
+                return;
+            }
             const refreshIcon = document.getElementById('refreshIcon');
             refreshIcon.classList.add('animate-spin');
 
             try {
                 const range = `${CONFIG.SHEET_NAME}!A2:O`;
                 const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
+                console.log('Fetching from URL:', url);
+                
                 const response = await fetch(url);
+                console.log('Response status:', response.status);
+                console.log('Response OK:', response.ok);
+                
                 const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (data.error) {
+                    throw new Error(data.error.message || 'Google Sheets API error');
+                }
 
                 if (data.values) {
                     console.log('Total rows received:', data.values.length);
