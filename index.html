@@ -135,78 +135,57 @@
         }
 
         async function loadJobs() {
-            if (!validToken) {
-                console.log('Invalid token, not loading jobs');
-                return;
-            }
+            if (!validToken) return;
             const refreshIcon = document.getElementById('refreshIcon');
             refreshIcon.classList.add('animate-spin');
 
             try {
                 const range = `${CONFIG.SHEET_NAME}!A2:O`;
                 const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
-                console.log('Fetching from URL:', url);
                 
                 const response = await fetch(url);
-                console.log('Response status:', response.status);
-                console.log('Response OK:', response.ok);
-                
                 const data = await response.json();
-                console.log('Response data:', data);
                 
                 if (data.error) {
                     throw new Error(data.error.message || 'Google Sheets API error');
                 }
 
                 if (data.values) {
-                    console.log('Total rows received:', data.values.length);
-                    console.log('Looking for staff name:', staffName);
-                    
                     // Filter jobs for this staff member
                     // Show only jobs that are: assigned to them and not completed
-                    const allJobs = data.values.map((row, index) => ({
-                        rowNumber: index + 2,
-                        date: row[0] || '',           // Column A - Date
-                        startTime: row[1] || '',       // Column B - Start Time
-                        endTime: row[2] || '',         // Column C - End Time
-                        status: row[3] || 'Assigned',  // Column D - Status
-                        clientName: row[4] || '',      // Column E - Client Name
-                        address: row[5] || '',         // Column F - Address
-                        phone: row[6] || '',           // Column G - Phone
-                        description: row[7] || '',     // Column H - Description
-                        price: row[8] || '',           // Column I - Price
-                        email: row[9] || '',           // Column J - Email
-                        assignedTo: row[10] || '',     // Column K - Assigned To (FIXED!)
-                        amountPaid: row[11] || '',     // Column L - Amount Paid
-                        paymentMethod: row[12] || '',  // Column M - Payment Method
-                        photosLink: row[13] || ''      // Column N - Photos Link
-                    }));
-                    
-                    console.log('All jobs mapped:', allJobs);
-                    
-                    jobs = allJobs.filter(job => {
-                        const assignedTo = job.assignedTo || '';
-                        const status = job.status || 'Assigned';
-                        
-                        console.log(`Row ${job.rowNumber}: assignedTo="${assignedTo}", status="${status}"`);
+                    jobs = data.values
+                        .map((row, index) => ({
+                            rowNumber: index + 2,
+                            date: row[0] || '',           // Column A - Date
+                            startTime: row[1] || '',       // Column B - Start Time
+                            endTime: row[2] || '',         // Column C - End Time
+                            status: row[3] || 'Assigned',  // Column D - Status
+                            clientName: row[4] || '',      // Column E - Client Name
+                            address: row[5] || '',         // Column F - Address
+                            phone: row[6] || '',           // Column G - Phone
+                            description: row[7] || '',     // Column H - Description
+                            price: row[8] || '',           // Column I - Price
+                            email: row[9] || '',           // Column J - Email
+                            assignedTo: row[10] || '',     // Column K - Assigned To
+                            amountPaid: row[11] || '',     // Column L - Amount Paid
+                            paymentMethod: row[12] || '',  // Column M - Payment Method
+                            photosLink: row[13] || ''      // Column N - Photos Link
+                        }))
+                        .filter(job => {
+                            const assignedTo = job.assignedTo || '';
+                            const status = job.status || 'Assigned';
 
-                        // Filter out jobs that are completed OR locally marked as completed
-                        if (completedJobRows.has(job.rowNumber)) {
-                            console.log(`Row ${job.rowNumber}: Filtered (locally completed)`);
-                            return false;
-                        }
-                        
-                        const matches = assignedTo.toLowerCase() === staffName.toLowerCase() &&
-                            status.toLowerCase() !== 'completed';
-                        
-                        console.log(`Row ${job.rowNumber}: ${matches ? 'MATCH' : 'NO MATCH'}`);
-                        return matches;
-                    });
-                    
-                    console.log('Filtered jobs for', staffName + ':', jobs);
+                            // Filter out jobs that are completed OR locally marked as completed
+                            if (completedJobRows.has(job.rowNumber)) {
+                                return false;
+                            }
+
+                            return assignedTo.toLowerCase() === staffName.toLowerCase() &&
+                                status.toLowerCase() !== 'completed';
+                        });
+
                     renderJobs();
                 } else {
-                    console.log('No data.values returned');
                     jobs = [];
                     renderJobs();
                 }
