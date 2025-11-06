@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +11,6 @@
         }
     </style>
 </head>
-
 <body class="bg-gray-50">
     <div id="app">
         <div class="bg-white shadow-sm sticky top-0 z-10">
@@ -22,12 +20,9 @@
                         <h1 class="text-2xl font-bold text-gray-900" id="staffNameHeader">Loading...</h1>
                         <p class="text-sm text-gray-500 mt-1" id="lastUpdate">Last updated: --:--:--</p>
                     </div>
-                    <button onclick="loadJobs()" id="refreshBtn"
-                        class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                    <button onclick="loadJobs()" id="refreshBtn" class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
                         <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
                         Refresh
                     </button>
@@ -36,11 +31,8 @@
         </div>
         <div class="max-w-4xl mx-auto px-4 mt-6" id="jobsContainer">
             <div class="bg-white rounded-lg shadow-sm p-12 text-center">
-                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4 animate-spin" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                    </path>
+                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                 </svg>
                 <p class="text-gray-600">Loading jobs...</p>
             </div>
@@ -48,44 +40,39 @@
     </div>
 
     <!-- Payment Modal -->
-    <div id="paymentModal"
-        class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div id="paymentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <h2 class="text-xl font-bold text-gray-900 mb-4">Complete Job - Enter Payment</h2>
-
+            
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Amount Paid ($)</label>
-                    <input type="number" id="amountPaid" step="0.01" placeholder="Enter amount"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    <input type="number" id="amountPaid" step="0.01" placeholder="Enter amount" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
                 </div>
-
+                
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Payment Method</label>
                     <div class="space-y-2">
-                        <label
-                            class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                            <input type="radio" name="paymentMethod" value="Cash" checked
-                                class="w-4 h-4 text-green-600">
+                        <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="radio" name="paymentMethod" value="Cash" checked class="w-4 h-4 text-green-600">
                             <span class="ml-3 text-gray-900">Cash</span>
                         </label>
-                        <label
-                            class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                            <input type="radio" name="paymentMethod" value="Bank Transfer/Check"
-                                class="w-4 h-4 text-green-600">
+                        <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="radio" name="paymentMethod" value="Bank Transfer/Check" class="w-4 h-4 text-green-600">
                             <span class="ml-3 text-gray-900">Bank Transfer/Check</span>
                         </label>
                     </div>
                 </div>
             </div>
-
+            
             <div class="flex gap-3 mt-6">
-                <button onclick="closePaymentModal()"
-                    class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition-colors">
+                <button onclick="closePaymentModal()" 
+                        class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition-colors">
                     Cancel
                 </button>
-                <button onclick="submitCompletion()"
-                    class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors">
+                <button onclick="submitCompletion()" 
+                        class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors">
                     Complete Job
                 </button>
             </div>
@@ -112,7 +99,7 @@
         let validToken = false;
         let pendingCompletionRow = null;
         let completedJobRows = new Set(); // Track locally completed jobs
-
+        
         function getStaffName() {
             const params = new URLSearchParams(window.location.search);
             const token = params.get('token');
@@ -133,66 +120,63 @@
                 `;
             }
         }
-
+        
         async function loadJobs() {
             if (!validToken) return;
             const refreshIcon = document.getElementById('refreshIcon');
             refreshIcon.classList.add('animate-spin');
-
+            
             try {
-                const range = `${CONFIG.SHEET_NAME}!A2:O`;
+                const range = `${CONFIG.SHEET_NAME}!A2:N`;
                 const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/${range}?key=${CONFIG.API_KEY}`;
-                
                 const response = await fetch(url);
                 const data = await response.json();
                 
-                if (data.error) {
-                    throw new Error(data.error.message || 'Google Sheets API error');
-                }
-
                 if (data.values) {
                     // Filter jobs for this staff member
-                    // Show only jobs that are: assigned to them and not completed
+                    // Show only jobs that are: assigned to them, not completed, AND released
                     jobs = data.values
                         .map((row, index) => ({
                             rowNumber: index + 2,
-                            date: row[0] || '',           // Column A - Date
-                            startTime: row[1] || '',       // Column B - Start Time
-                            endTime: row[2] || '',         // Column C - End Time
-                            status: row[3] || 'Assigned',  // Column D - Status
-                            clientName: row[4] || '',      // Column E - Client Name
-                            address: row[5] || '',         // Column F - Address
-                            phone: row[6] || '',           // Column G - Phone
-                            description: row[7] || '',     // Column H - Description
-                            price: row[8] || '',           // Column I - Price
-                            email: row[9] || '',           // Column J - Email
-                            assignedTo: row[10] || '',     // Column K - Assigned To
-                            amountPaid: row[11] || '',     // Column L - Amount Paid
-                            paymentMethod: row[12] || '',  // Column M - Payment Method
-                            photosLink: row[13] || ''      // Column N - Photos Link
+                            date: row[0] || '',
+                            startTime: row[1] || '',
+                            endTime: row[2] || '',
+                            assignedTo: row[3] || '',
+                            status: row[4] || 'Assigned',
+                            name: row[5] || '',
+                            location: row[6] || '',
+                            phone: row[7] || '',
+                            description: row[8] || '',
+                            price: row[9] || '',
+                            email: row[10] || '',
+                            amountPaid: row[11] || '',
+                            paymentMethod: row[12] || '',
+                            photosLink: row[13] || ''
                         }))
                         .filter(job => {
                             const assignedTo = job.assignedTo || '';
                             const status = job.status || 'Assigned';
-
+                            const released = job.released || '';
+                            
                             // Filter out jobs that are completed OR locally marked as completed
                             if (completedJobRows.has(job.rowNumber)) {
-                                return false;
+                                return false; // Hide jobs we just completed locally
                             }
-
-                            return assignedTo.toLowerCase() === staffName.toLowerCase() &&
-                                status.toLowerCase() !== 'completed';
+                            
+                            return assignedTo.toLowerCase() === staffName.toLowerCase() && 
+                                   status.toLowerCase() !== 'completed' &&
+                                   released.toLowerCase() === 'yes';
                         });
-
+                    
                     renderJobs();
                 } else {
                     jobs = [];
                     renderJobs();
                 }
-
+                
                 const now = new Date();
                 document.getElementById('lastUpdate').textContent = `Last updated: ${now.toLocaleTimeString()}`;
-
+                
             } catch (error) {
                 console.error('Error loading jobs:', error);
                 document.getElementById('jobsContainer').innerHTML = `
@@ -206,10 +190,10 @@
                 refreshIcon.classList.remove('animate-spin');
             }
         }
-
+        
         function renderJobs() {
             const container = document.getElementById('jobsContainer');
-
+            
             if (jobs.length === 0) {
                 container.innerHTML = `
                     <div class="bg-white rounded-lg shadow-sm p-12 text-center">
@@ -222,12 +206,12 @@
                 `;
                 return;
             }
-
+            
             const jobsHTML = jobs.map((job, index) => {
                 const statusColor = getStatusColor(job.status);
                 const showStartButton = job.status === 'Assigned' || job.status === '';
                 const showCompleteButton = job.status === 'In Progress';
-
+                
                 return `
                     <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 mb-4">
                         <div class="flex items-center justify-between mb-4">
@@ -241,8 +225,8 @@
                             <div><span class="font-semibold">Date:</span> ${job.date}</div>
                             <div><span class="font-semibold">Start Time:</span> ${job.startTime}</div>
                             <div><span class="font-semibold">End Time:</span> ${job.endTime}</div>
-                            <div><span class="font-semibold">Client:</span> ${job.clientName}</div>
-                            <div><span class="font-semibold">Address:</span> ${job.address}</div>
+                            <div><span class="font-semibold">Client Name:</span> ${job.name}</div>
+                            <div><span class="font-semibold">Location:</span> ${job.location}</div>
                             <div><span class="font-semibold">Phone:</span> ${job.phone}</div>
                             <div><span class="font-semibold">Price:</span> ${job.price}</div>
                             <div class="pt-2">
@@ -280,51 +264,51 @@
                     </div>
                 `;
             }).join('');
-
+            
             container.innerHTML = `<div class="space-y-4">${jobsHTML}</div>`;
         }
-
+        
         function openPaymentModal(rowNumber) {
             pendingCompletionRow = rowNumber;
             document.getElementById('amountPaid').value = '';
             document.querySelector('input[name="paymentMethod"][value="Cash"]').checked = true;
             document.getElementById('paymentModal').classList.remove('hidden');
         }
-
+        
         function closePaymentModal() {
             document.getElementById('paymentModal').classList.add('hidden');
             pendingCompletionRow = null;
         }
-
+        
         async function submitCompletion() {
             const amountPaid = document.getElementById('amountPaid').value;
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-
+            
             if (!amountPaid || amountPaid <= 0) {
                 alert('Please enter a valid amount paid.');
                 return;
             }
-
+            
             if (!pendingCompletionRow) {
                 alert('Error: No job selected. Please refresh and try again.');
                 closePaymentModal();
                 return;
             }
-
+            
             const rowToComplete = pendingCompletionRow;
             closePaymentModal();
-
+            
             try {
                 // Add to local completed cache
                 completedJobRows.add(rowToComplete);
-
+                
                 // Remove completed job from UI immediately
                 const jobIndex = jobs.findIndex(j => j.rowNumber === rowToComplete);
                 if (jobIndex !== -1) {
                     jobs.splice(jobIndex, 1);
                     renderJobs();
                 }
-
+                
                 console.log('Sending completion:', {
                     rowNumber: rowToComplete,
                     status: 'Completed',
@@ -332,7 +316,7 @@
                     paymentMethod: paymentMethod,
                     staffName: staffName
                 });
-
+                
                 const response = await fetch(CONFIG.SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -345,12 +329,12 @@
                         staffName: staffName
                     })
                 });
-
+                
                 console.log('Completion request sent');
-
+                
                 // Don't reload - job already removed from UI
                 // Auto-refresh every 2 minutes will sync any new jobs
-
+                
             } catch (error) {
                 console.error('Error updating status:', error);
                 alert('Failed to complete job. Please try again or contact your manager.');
@@ -359,7 +343,7 @@
                 pendingCompletionRow = null;
             }
         }
-
+        
         async function updateStatus(rowNumber, newStatus) {
             try {
                 // Update UI immediately
@@ -368,7 +352,7 @@
                     jobs[jobIndex].status = newStatus;
                     renderJobs();
                 }
-
+                
                 await fetch(CONFIG.SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -379,18 +363,18 @@
                         staffName: staffName
                     })
                 });
-
+                
                 setTimeout(() => {
                     loadJobs();
                 }, 1500);
-
+                
             } catch (error) {
                 console.error('Error updating status:', error);
                 alert('Failed to update status. Please try again or contact your manager.');
                 loadJobs();
             }
         }
-
+        
         function getStatusColor(status) {
             switch (status) {
                 case 'In Progress': return 'bg-blue-100 text-blue-800';
@@ -398,13 +382,12 @@
                 default: return 'bg-gray-100 text-gray-800';
             }
         }
-
+        
         getStaffName();
         if (validToken) {
             loadJobs();
-            setInterval(() => {loadJobs();}, CONFIG.AUTO_REFRESH_MINUTES * 60 * 1000);
+            setInterval(() => { loadJobs(); }, CONFIG.AUTO_REFRESH_MINUTES * 60 * 1000);
         }
     </script>
 </body>
-
 </html>
