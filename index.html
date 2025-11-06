@@ -145,8 +145,6 @@
                 const response = await fetch(url);
                 const data = await response.json();
 
-                console.log('Raw data received:', data.values); // Debug log
-
                 if (data.values) {
                     jobs = data.values
                         .map((row, index) => ({
@@ -170,14 +168,6 @@
                             const assignedTo = job.assignedTo || '';
                             const status = job.status || 'Assigned';
 
-                            console.log(`Job ${job.rowNumber}:`, {
-                                assignedTo,
-                                status,
-                                matchesStaff: assignedTo.toLowerCase() === staffName.toLowerCase(),
-                                notCompleted: status.toLowerCase() !== 'completed',
-                                notInCompletedSet: !completedJobRows.has(job.rowNumber)
-                            }); // Debug log
-
                             if (completedJobRows.has(job.rowNumber)) {
                                 return false;
                             }
@@ -186,7 +176,6 @@
                                 status.toLowerCase() !== 'completed';
                         });
 
-                    console.log('Filtered jobs:', jobs); // Debug log
                     renderJobs();
                 } else {
                     jobs = [];
@@ -244,3 +233,154 @@
                             <div><span class="font-semibold">Date:</span> ${job.date}</div>
                             <div><span class="font-semibold">Start Time:</span> ${job.startTime}</div>
                             <div><span class="font-semibold">End Time:</span> ${job.endTime}</div>
+                            <div><span class="font-semibold">Client Name:</span> ${job.name}</div>
+                            <div><span class="font-semibold">Location:</span> ${job.location}</div>
+                            <div><span class="font-semibold">Phone:</span> ${job.phone}</div>
+                            <div><span class="font-semibold">Price:</span> ${job.price}</div>
+                            <div class="pt-2">
+                                <span class="font-semibold">Job Description:</span>
+                                <p class="mt-1 text-gray-700 whitespace-pre-wrap">${job.description}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-3 mt-6 pt-4 border-t border-gray-200">
+                            ${job.photosLink ? `
+                                <a href="${job.photosLink}" target="_blank" rel="noopener noreferrer" 
+                                   class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-center font-medium transition-colors">
+                                    View Photos
+                                </a>
+                            ` : `
+                                <div class="flex-1 px-4 py-2 bg-gray-300 text-gray-500 rounded-lg text-center font-medium cursor-not-allowed">
+                                    No Photos
+                                </div>
+                            `}
+                            
+                            ${showStartButton ? `
+                                <button onclick="updateStatus(${job.rowNumber}, 'In Progress')" 
+                                        class="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium transition-colors">
+                                    Start Job
+                                </button>
+                            ` : ''}
+                            
+                            ${showCompleteButton ? `
+                                <button onclick="openPaymentModal(${job.rowNumber})" 
+                                        class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors">
+                                    Mark Complete
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `<div class="space-y-4">${jobsHTML}</div>`;
+        }
+
+        function openPaymentModal(rowNumber) {
+            pendingCompletionRow = rowNumber;
+            document.getElementById('amountPaid').value = '';
+            document.querySelector('input[name="paymentMethod"][value="Cash"]').checked = true;
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+            pendingCompletionRow = null;
+        }
+
+        async function submitCompletion() {
+            const amountPaid = document.getElementById('amountPaid').value;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+            if (!amountPaid || amountPaid <= 0) {
+                alert('Please enter a valid amount paid.');
+                return;
+            }
+
+            if (!pendingCompletionRow) {
+                alert('Error: No job selected. Please refresh and try again.');
+                closePaymentModal();
+                return;
+            }
+
+            const rowToComplete = pendingCompletionRow;
+            closePaymentModal();
+
+            try {
+                completedJobRows.add(rowToComplete);
+
+                const jobIndex = jobs.findIndex(j => j.rowNumber === rowToComplete);
+                if (jobIndex !== -1) {
+                    jobs.splice(jobIndex, 1);
+                    renderJobs();
+                }
+
+                await fetch(CONFIG.SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        rowNumber: rowToComplete,
+                        status: 'Completed',
+                        amountPaid: amountPaid,
+                        paymentMethod: paymentMethod,
+                        staffName: staffName
+                    })
+                });
+
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('Failed to complete job. Please try again or contact your manager.');
+                loadJobs();
+            } finally {
+                pendingCompletionRow = null;
+            }
+        }
+
+        async function updateStatus(rowNumber, newStatus) {
+            try {
+                const jobIndex = jobs.findIndex(j => j.rowNumber === rowNumber);
+                if (jobIndex !== -1) {
+                    jobs[jobIndex].status = newStatus;
+                    renderJobs();
+                }
+
+                await fetch(CONFIG.SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        rowNumber: rowNumber,
+                        status: newStatus,
+                        staffName: staffName
+                    })
+                });
+
+                setTimeout(() => {
+                    loadJobs();
+                }, 1500);
+
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('Failed to update status. Please try again or contact your manager.');
+                loadJobs();
+            }
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'In Progress': return 'bg-blue-100 text-blue-800';
+                case 'Completed': return 'bg-green-100 text-green-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        getStaffName();
+        if (validToken) {
+            loadJobs();
+            setInterval(() => {loadJobs();}, CONFIG.AUTO_REFRESH_MINUTES * 60 * 1000);
+        }
+    </script>
+</body>
+
+</html>
