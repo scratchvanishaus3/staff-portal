@@ -153,7 +153,7 @@
                             startTime: row[1] || '',
                             endTime: row[2] || '',
                             assignedTo: row[3] || '',      // Column D
-                            status: row[4] || 'Assigned',  // Column E
+                            status: row[4] || '',          // Column E
                             name: row[5] || '',            // Column F
                             location: row[6] || '',        // Column G
                             phone: row[7] || '',           // Column H
@@ -166,14 +166,21 @@
                         }))
                         .filter(job => {
                             const assignedTo = job.assignedTo || '';
-                            const status = job.status || 'Assigned';
+                            const status = (job.status || '').trim();
 
+                            // Skip jobs we've already marked as completed locally
                             if (completedJobRows.has(job.rowNumber)) {
                                 return false;
                             }
 
-                            return assignedTo.toLowerCase() === staffName.toLowerCase() &&
-                                status.toLowerCase() !== 'completed';
+                            // Only show jobs that are:
+                            // 1. Assigned to this staff member
+                            // 2. Status is "Assigned" OR "In Progress"
+                            const isAssignedToMe = assignedTo.toLowerCase() === staffName.toLowerCase();
+                            const isValidStatus = status.toLowerCase() === 'assigned' || 
+                                                  status.toLowerCase() === 'in progress';
+
+                            return isAssignedToMe && isValidStatus;
                         });
 
                     renderJobs();
@@ -217,8 +224,8 @@
 
             const jobsHTML = jobs.map((job, index) => {
                 const statusColor = getStatusColor(job.status);
-                const showStartButton = job.status === 'Assigned' || job.status === '';
-                const showCompleteButton = job.status === 'In Progress';
+                const showStartButton = job.status.toLowerCase() === 'assigned';
+                const showCompleteButton = job.status.toLowerCase() === 'in progress';
 
                 return `
                     <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200 mb-4">
@@ -368,9 +375,10 @@
         }
 
         function getStatusColor(status) {
-            switch (status) {
-                case 'In Progress': return 'bg-blue-100 text-blue-800';
-                case 'Completed': return 'bg-green-100 text-green-800';
+            switch (status.toLowerCase()) {
+                case 'in progress': return 'bg-blue-100 text-blue-800';
+                case 'completed': return 'bg-green-100 text-green-800';
+                case 'assigned': return 'bg-yellow-100 text-yellow-800';
                 default: return 'bg-gray-100 text-gray-800';
             }
         }
